@@ -1,20 +1,8 @@
 {
-  "source_directories": [
-    "/home/user/documents",
-    "/home/user/photos"
-  ],
-  "backup_frequency": "daily",
-  "excluded_files": [
-    "*.tmp",
-    "*.log"
-  ],
-  "destination_directory": "/mnt/USBACKUP",
-  "retention_policy": {
-    "keep_last": 25,
-    "delete_older_than_days": 90
-  },
-  "notification": {
-    "enabled": true,
-    "email": "beseymoh@gmail.com"
-  }
+    "backup_directory": "/home/ubuntu/backups",
+    "source_path": "/path/to/data/to/backup",
+    "backup_interval": "2",  // Set frequency in hours
+    "remote_host": "15.223.3.155",
+    "remote_user": "ubuntu",
+    "remote_path": "/remote/backup/path"
 }
