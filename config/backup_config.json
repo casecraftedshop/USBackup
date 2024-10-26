@@ -1,6 +1,6 @@
 {
   "backup_directory": "/home/ubuntu/backups/",
-  "backup_interval": "0 */8 * * *",  // Cron expression for every 8 hours
+  "backup_interval": "0 */1 * * *",  // Cron expression for every 8 hours
   "usb_device": "/dev/sdb1",
   "remote_host": "15.223.3.155",
   "remote_user": "ubuntu",
