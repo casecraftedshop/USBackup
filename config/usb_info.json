@@ -1,8 +1,0 @@
-{
-    "usb_device": "/dev/sdb1",
-    "mount_point": "/mnt/usb",
-    "vendor": "Kingston",
-    "product": "DataTraveler 3.0",
-    "serial_number": "08606E6D413DF330170C2ECC",
-    "filesystem_type": "vfat"
-}

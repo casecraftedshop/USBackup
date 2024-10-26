@@ -1,0 +1,40 @@
+{
+  "devices": [
+    {
+      "device_type": "USB",
+      "device_path": "/dev/sda1",
+      "mount_point": "/mnt/usb",
+      "filesystem_type": "ext4",
+      "capacity": "64G",
+      "vendor": "Kingston",
+      "product": "DataTraveler 3.0",
+      "serial_number": "08606E6D413DF330170C2ECC",
+      "is_enabled": true,
+      "encryption": "aes256"
+    },
+    {
+      "device_type": "HDD",
+      "device_path": "/dev/sdb1",
+      "mount_point": "/mnt/hdd",
+      "filesystem_type": "ext4",
+      "capacity": "1TB",
+      "vendor": "Seagate",
+      "product": "Backup Plus",
+      "serial_number": "12345ABCDE",
+      "is_enabled": true,
+      "encryption": "none"
+    },
+    {
+      "device_type": "Network",
+      "device_path": "//192.168.1.100/shared",
+      "mount_point": "/mnt/network_drive",
+      "filesystem_type": "cifs",
+      "capacity": "500GB",
+      "vendor": "Synology",
+      "product": "NAS",
+      "serial_number": "NAS123456",
+      "is_enabled": true,
+      "encryption": "none"
+    }
+  ]
+}
