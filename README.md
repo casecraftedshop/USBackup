@@ -1,5 +1,4 @@
 markdown
-Copy code
 # Networked Backup System
 
 ## Overview
@@ -38,11 +37,13 @@ networked-backup-system/
 ├── index.md                         # Homepage content for GitHub Pages (if applicable)
 └── .gitignore                       # Exclude logs, SSH keys, sensitive data from repo
 
-## Installation
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/yourusername/networked-backup-system.git
-   cd networked-backup-system
+Installation
+Clone the repository:
+
+bash
+Copy code
+git clone https://github.com/yourusername/networked-backup-system.git
+cd networked-backup-system
 Configure the project:
 
 Edit config/backup_config.json to specify backup paths and frequency.
