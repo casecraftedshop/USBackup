@@ -37,8 +37,6 @@ networked-backup-system/
 ├── README.md                        # Overview, purpose, and instructions for project
 ├── index.md                         # Homepage content for GitHub Pages (if applicable)
 └── .gitignore                       # Exclude logs, SSH keys, sensitive data from repo
-bash
-Copy code
 
 ## Installation
 1. **Clone the repository:**
