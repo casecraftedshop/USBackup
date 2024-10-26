@@ -1,22 +1,38 @@
 {
-  "backup_directory": "/home/ubuntu/backups/",
-  "backup_interval": "0 */8 * * *",
+  "backup_directory": "${BACKUP_DIRECTORY}",
+  "backup_interval": "${BACKUP_INTERVAL}",
   "storage_devices": [
     {
-      "device_path": "/dev/sdb1",
+      "device_path": "${USB_DEVICE_PATH}",
       "mount_point": "/mnt/usb",
       "device_type": "USB",
       "is_enabled": true,
-      "encryption": "false"
+      "encryption": "aes256",
+      "health_check": true,
+      "logging_level": "ERROR",
+      "notification_enabled": true
     },
     {
-      "device_path": "//192.168.2.10/shared_folder",
+      "device_path": "${HDD_DEVICE_PATH}",
+      "mount_point": "/mnt/hdd",
+      "device_type": "HDD",
+      "is_enabled": true,
+      "encryption": "aes256",
+      "health_check": true,
+      "logging_level": "ERROR",
+      "notification_enabled": true
+    },
+    {
+      "device_path": "${NETWORK_DEVICE_PATH}",
       "mount_point": "/mnt/network_drive",
       "device_type": "Network",
       "is_enabled": true,
-      "encryption": "true",
+      "encryption": "aes256",
       "network_username": "${NETWORK_USERNAME}",
-      "network_password": "${NETWORK_PASSWORD}"  // Handle using environment variables or secret manager
+      "network_password": "${NETWORK_PASSWORD}",
+      "health_check": true,
+      "logging_level": "ERROR",
+      "notification_enabled": true
     }
   ],
   "remote_host": "${REMOTE_HOST}",
@@ -26,6 +42,6 @@
   "data_to_backup": [
     "/path/to/data/to/backup"
   ],
-  "logging_level": "ERROR",
-  "notification_email": "${NOTIFICATION_EMAIL}"
+  "notification_email": "${NOTIFICATION_EMAIL}",
+  "logging_level": "ERROR"
 }
