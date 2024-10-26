@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Load environment variables
+source .env
+
 # Load configuration details
 CONFIG_FILE="config/backup_config.json"
 USB_MOUNT_POINT="/mnt/usb"
@@ -13,12 +16,29 @@ if ! mount | grep "$USB_MOUNT_POINT" > /dev/null; then
     exit 1
 fi
 
-# Perform SFTP upload
+# Perform SFTP upload with improved error handling
 echo "Uploading files to $REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH..."
-sftp "$REMOTE_USER@$REMOTE_HOST" <<EOF
+
+# Using a loop to retry the SFTP upload up to 3 times if it fails
+for i in {1..3}; do
+    sftp -i "$SFTP_PRIVATE_KEY" "$REMOTE_USER@$REMOTE_HOST" <<EOF
 put $USB_MOUNT_POINT/backup_*.tar.gz $REMOTE_PATH/
 bye
 EOF
 
-# Notify user
-echo "Files uploaded to $REMOTE_HOST successfully."
+    if [ $? -eq 0 ]; then
+        echo "Files uploaded to $REMOTE_HOST successfully."
+        break
+    else
+        echo "Attempt $i: Failed to upload files to $REMOTE_HOST. Retrying in 5 seconds..."
+        sleep 5
+    fi
+
+    if [ $i -eq 3 ]; then
+        echo "Error: Upload failed after 3 attempts."
+        exit 1
+    fi
+done
+
+# Notify user if upload is successful
+echo "Backup upload completed successfully."
