@@ -1,6 +1,8 @@
+markdown
+Copy code
 # Networked Backup System
 
-                                                                    ## **Overview**
+## Overview
 The **Networked Backup System** automates the process of backing up data to a USB drive connected to your home Wi-Fi. It ensures that your important files are securely backed up and easily accessible while utilizing SFTP for remote access.
 
 ## Features
@@ -9,8 +11,7 @@ The **Networked Backup System** automates the process of backing up data to a US
 - **Logging**: Keep track of backup activities and errors.
 - **Comprehensive Documentation**: Detailed guides for setup and troubleshooting.
 
-
-                                                           ## **Project Structure**
+## Project Structure
 
 ```plaintext
 networked-backup-system/
@@ -37,24 +38,32 @@ networked-backup-system/
 ├── README.md                        # Overview, purpose, and instructions for project
 ├── index.md                         # Homepage content for GitHub Pages (if applicable)
 └── .gitignore                       # Exclude logs, SSH keys, sensitive data from repo
+Installation
+Clone the repository:
 
-
-                                                           ## **Installation**
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/yourusername/networked-backup-system.git
-   cd networked-backup-system
+bash
+Copy code
+git clone https://github.com/yourusername/networked-backup-system.git
+cd networked-backup-system
 Configure the project:
 
 Edit config/backup_config.json to specify backup paths and frequency.
 Update config/usb_info.json with details about your USB drive.
-Make scripts executable:chmod +x scripts/*.sh
+Make scripts executable:
+
+bash
+Copy code
+chmod +x scripts/*.sh
 Run the connection script: Execute scripts/connect_usb.sh to connect to your USB drive.
 
 Schedule backups: Use scripts/schedule_cron.sh to set up cron jobs for regular backups.
 
-**Usage**
-To run the backup manually, use:./scripts/backup.sh
+Usage
+To run the backup manually, use:
+
+bash
+Copy code
+./scripts/backup.sh
 For SFTP uploads, execute:
 
 bash
@@ -63,14 +72,14 @@ Copy code
 Troubleshooting
 Refer to docs/troubleshooting.md for solutions to common issues such as connection problems or permission errors.
 
-**Contributing**
+Contributing
 If you wish to contribute to this project, please fork the repository and submit a pull request. Ensure your contributions adhere to the coding standards and include appropriate tests.
 
-**License**
+License
 This project is licensed under the MIT License. See the LICENSE file for more details.
 
-**Contact**
+Contact
 For any inquiries, please contact Your Name.
 
-**Acknowledgments**
+Acknowledgments
 Special thanks to the open-source community for the tools and libraries that made this project possible.
