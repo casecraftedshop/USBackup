@@ -1,3 +1,5 @@
+markdown
+Copy code
 # Networked Backup System
 
 ## Overview
@@ -20,3 +22,41 @@ Copy code
    ```bash
    git clone https://github.com/yourusername/networked-backup-system.git
    cd networked-backup-system
+Configure the project:
+
+Edit config/backup_config.json to specify backup paths and frequency.
+Update config/usb_info.json with details about your USB drive.
+Make scripts executable:
+
+bash
+Copy code
+chmod +x scripts/*.sh
+Run the connection script: Execute scripts/connect_usb.sh to connect to your USB drive.
+
+Schedule backups: Use scripts/schedule_cron.sh to set up cron jobs for regular backups.
+
+Usage
+To run the backup manually, use:
+
+bash
+Copy code
+./scripts/backup.sh
+For SFTP uploads, execute:
+
+bash
+Copy code
+./scripts/sftp_upload.sh
+Troubleshooting
+Refer to docs/troubleshooting.md for solutions to common issues such as connection problems or permission errors.
+
+Contributing
+If you wish to contribute to this project, please fork the repository and submit a pull request. Ensure your contributions adhere to the coding standards and include appropriate tests.
+
+License
+This project is licensed under the MIT License. See the LICENSE file for more details.
+
+Contact
+For any inquiries, please contact Your Name.
+
+Acknowledgments
+Special thanks to the open-source community for the tools and libraries that made this project possible.
