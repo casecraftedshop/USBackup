@@ -1,20 +1,16 @@
 import os
 import tarfile
+import asyncio
 from datetime import datetime
 import paramiko
 import json
-import logging
 
-# Setup logging
-logging.basicConfig(filename='backup_log.txt', level=logging.INFO,
-                    format='%(asctime)s %(levelname)s: %(message)s')
-
-# Load configuration
-with open('config/backup_config.json', 'r') as config_file:
+# Load configuration from backup_config.json
+with open('config/backup_config.json') as config_file:
     config = json.load(config_file)
 
-local_backup_dir = config['backup_directory']
-remote_backup_dir = config['remote_directory']
+local_backup_dir = config['local_backup_directory']
+remote_backup_dir = config['remote_backup_directory']
 ssh_host = config['ssh_host']
 ssh_user = config['ssh_user']
 ssh_key_path = config['ssh_key_path']
@@ -24,40 +20,35 @@ data_to_backup = config['data_to_backup']
 timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
 backup_filename = f'backup_{timestamp}.tar.gz'
 
-# Function to create a backup
-def create_backup():
+async def create_backup():
+    """Asynchronous function to create a backup."""
+    backup_path = os.path.join(local_backup_dir, backup_filename)
     try:
-        backup_path = os.path.join(local_backup_dir, backup_filename)
         with tarfile.open(backup_path, 'w:gz') as tar:
-            tar.add(data_to_backup, arcname=os.path.basename(data_to_backup))
-        logging.info(f"Backup created successfully: {backup_path}")
+            for path in data_to_backup:
+                tar.add(path, arcname=os.path.basename(path))
+        print(f'Backup {backup_filename} created successfully.')
     except Exception as e:
-        logging.error(f"Failed to create backup: {e}")
-        raise
+        print(f'Error creating backup: {e}')
 
-# Function to upload the backup to remote server
-def upload_backup():
+async def upload_backup():
+    """Asynchronous function to upload the backup via SFTP."""
+    backup_path = os.path.join(local_backup_dir, backup_filename)
+    transport = paramiko.Transport((ssh_host, 22))
     try:
-        transport = paramiko.Transport((ssh_host, 22))
         transport.connect(username=ssh_user, key_filename=ssh_key_path)
         sftp = paramiko.SFTPClient.from_transport(transport)
-
-        try:
-            local_path = os.path.join(local_backup_dir, backup_filename)
-            remote_path = os.path.join(remote_backup_dir, backup_filename)
-            sftp.put(local_path, remote_path)
-            logging.info(f"Backup uploaded successfully to {ssh_host}:{remote_path}")
-        finally:
-            sftp.close()
-            transport.close()
+        sftp.put(backup_path, os.path.join(remote_backup_dir, backup_filename))
+        print(f'Backup {backup_filename} uploaded successfully.')
     except Exception as e:
-        logging.error(f"Failed to upload backup: {e}")
-        raise
+        print(f'Error uploading backup: {e}')
+    finally:
+        sftp.close()
+        transport.close()
+
+async def main():
+    await create_backup()
+    await upload_backup()
 
 if __name__ == '__main__':
-    try:
-        create_backup()
-        upload_backup()
-        logging.info("Backup process completed successfully.")
-    except Exception as e:
-        logging.error(f"Backup process failed: {e}")
+    asyncio.run(main())
