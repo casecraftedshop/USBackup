@@ -47,8 +47,5 @@
       "logging_level": "ERROR",
       "notification_enabled": true
     }
-  ],
-  "notification_email": "${NOTIFICATION_EMAIL}",
-  "backup_directory": "${BACKUP_DIRECTORY}",
-  "backup_interval": "${BACKUP_INTERVAL}"
+  ]
 }
