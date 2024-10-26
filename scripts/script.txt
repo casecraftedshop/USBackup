@@ -1,0 +1,13 @@
+# WinSCP Script for SFTP Backup
+
+# Open SFTP connection
+open sftp://ubuntu@15.223.3.155/ -hostkey="ssh-ed25519 255 sY67n+0qxAst+hSQlC5y/Fon9VYIORwUPtFGYMfa9fk"
+
+# Change to the backup directory
+cd /remote/backup/path
+
+# Upload the latest backup file
+put /home/ubuntu/backups/backup_*.tar.gz
+
+# Exit WinSCP
+exit
