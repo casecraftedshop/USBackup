@@ -1,0 +1,10 @@
+{
+  "usb_drive": {
+    "vendor": "Kingston",
+    "product": "DataTraveler 3.0",
+    "serial_number": "08606E6D413DF330170C2ECC",
+    "mount_point": "/mnt/usb_backup",
+    "filesystem": "vfat",
+    "capacity_gb": 64
+  }
+}
