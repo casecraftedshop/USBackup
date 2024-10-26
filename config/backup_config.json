@@ -1,12 +1,31 @@
 {
   "backup_directory": "/home/ubuntu/backups/",
-  "backup_interval": "0 */8 * * *",  // Cron expression for every 8 hours
-  "usb_device": "/dev/sdb1",
-  "remote_host": "15.223.3.155",
-  "remote_user": "ubuntu",
-  "remote_path": "/remote/backup/path",
-  "ssh_key_path": "/path/to/private/key",
+  "backup_interval": "0 */8 * * *",
+  "storage_devices": [
+    {
+      "device_path": "/dev/sdb1",
+      "mount_point": "/mnt/usb",
+      "device_type": "USB",
+      "is_enabled": true,
+      "encryption": "false"
+    },
+    {
+      "device_path": "//192.168.2.10/shared_folder",
+      "mount_point": "/mnt/network_drive",
+      "device_type": "Network",
+      "is_enabled": true,
+      "encryption": "true",
+      "network_username": "${NETWORK_USERNAME}",
+      "network_password": "${NETWORK_PASSWORD}"  // Handle using environment variables or secret manager
+    }
+  ],
+  "remote_host": "${REMOTE_HOST}",
+  "remote_user": "${REMOTE_USER}",
+  "remote_path": "${REMOTE_PATH}",
+  "ssh_key_path": "${SSH_KEY_PATH}",
   "data_to_backup": [
     "/path/to/data/to/backup"
-  ]
+  ],
+  "logging_level": "ERROR",
+  "notification_email": "${NOTIFICATION_EMAIL}"
 }
