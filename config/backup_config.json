@@ -1,8 +1,12 @@
 {
-    "backup_directory": "/home/ubuntu/backups",
-    "source_path": "/path/to/data/to/backup",
-    "backup_interval": "02.00.00",  // Set frequency in hours
-    "remote_host": "15.223.3.155",
-    "remote_user": "ubuntu",
-    "remote_path": "/remote/backup/path"
+  "backup_directory": "/home/ubuntu/backups/",
+  "backup_interval": "0 */8 * * *",  // Cron expression for every 8 hours
+  "usb_device": "/dev/sdb1",
+  "remote_host": "15.223.3.155",
+  "remote_user": "ubuntu",
+  "remote_path": "/remote/backup/path",
+  "ssh_key_path": "/path/to/private/key",
+  "data_to_backup": [
+    "/path/to/data/to/backup"
+  ]
 }
