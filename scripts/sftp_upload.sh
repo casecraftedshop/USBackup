@@ -1,44 +1,58 @@
 #!/bin/bash
 
-# Load environment variables
-source .env
+set -e  # Exit on error
+set -u  # Treat unset variables as error
+set -o pipefail  # Fail on first failure in a pipe
 
-# Load configuration details
-CONFIG_FILE="config/backup_config.json"
-USB_MOUNT_POINT="/mnt/usb"
-REMOTE_HOST=$(jq -r '.remote_host' "$CONFIG_FILE")
-REMOTE_USER=$(jq -r '.remote_user' "$CONFIG_FILE")
-REMOTE_PATH=$(jq -r '.remote_path' "$CONFIG_FILE")
+# Trap to ensure .env file is removed after script execution
+trap 'rm -f .env' EXIT
 
-# Check if USB is mounted
-if ! mount | grep "$USB_MOUNT_POINT" > /dev/null; then
-    echo "USB device not mounted. Please mount it first."
+# Load and decrypt the .env file (ensure to remove after usage)
+if [ -f ".env.gpg" ]; then
+    gpg -d .env.gpg > .env
+fi
+
+# Source the environment variables
+if [ -f ".env" ]; then
+    source .env
+else
+    logger -p user.err "ERROR: .env file not found. Aborting."
     exit 1
 fi
 
-# Perform SFTP upload with improved error handling
-echo "Uploading files to $REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH..."
+# Configuration file for storage devices
+STORAGE_DEVICES_FILE="config/storage_devices.json"
+RETRY_COUNT=3
 
-# Using a loop to retry the SFTP upload up to 3 times if it fails
-for i in {1..3}; do
-    sftp -i "$SFTP_PRIVATE_KEY" "$REMOTE_USER@$REMOTE_HOST" <<EOF
-put $USB_MOUNT_POINT/backup_*.tar.gz $REMOTE_PATH/
-bye
-EOF
+# Example of retrieving sensitive information securely using `pass`
+NETWORK_PASSWORD=$(pass backup/network_password)
 
-    if [ $? -eq 0 ]; then
-        echo "Files uploaded to $REMOTE_HOST successfully."
-        break
-    else
-        echo "Attempt $i: Failed to upload files to $REMOTE_HOST. Retrying in 5 seconds..."
-        sleep 5
-    fi
+# Check for dependencies
+command -v jq >/dev/null 2>&1 || { logger -p user.err "jq is not installed. Aborting."; exit 1; }
 
-    if [ $i -eq 3 ]; then
-        echo "Error: Upload failed after 3 attempts."
-        exit 1
-    fi
-done
+# Function to mount devices
+mount_device() {
+    local device_path=$1
+    local mount_point=$2
+    local device_type=$3
 
-# Notify user if upload is successful
-echo "Backup upload completed successfully."
+    # Retry mechanism for mounting
+    for attempt in $(seq 1 $RETRY_COUNT); do
+        if [ "$device_type" == "Network" ]; then
+            logger -p user.info "Attempt $attempt/$RETRY_COUNT: Mounting network drive $device_path at $mount_point."
+            mount -t cifs "$device_path" "$mount_point" -o username="$NETWORK_USERNAME",password="$NETWORK_PASSWORD",rw && \
+            logger -p user.info "Network drive mounted successfully." && break || sleep 5
+        else
+            logger -p user.info "Attempt $attempt/$RETRY_COUNT: Mounting $device_type $device_path at $mount_point."
+            mount "$device_path" "$mount_point" && \
+            logger -p user.info "$device_type mounted successfully." && break || sleep 5
+        fi
+
+        if [ "$attempt" -eq "$RETRY_COUNT" ]; then
+            logger -p user.err "Failed to mount $device_path after $RETRY_COUNT attempts."
+        fi
+    done
+}
+
+# Notify user that all devices have been processed
+logger -p user.info "Device processing complete."
