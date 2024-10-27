@@ -1,5 +1,5 @@
 markdown
-# Networked Backup System
+# USBackup System
 
 ## Overview
 The **Networked Backup System** automates the process of backing up data to a USB drive connected to your home Wi-Fi. It ensures that your important files are securely backed up and easily accessible while utilizing SFTP for remote access.
