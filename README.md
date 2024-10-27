@@ -12,7 +12,7 @@ The **USBackup System** automates the process of backing up data to a USB drive 
 
 ## Project Structure
 ```plaintext
-networked-backup-system/
+USBackup/
 │
 ├── scripts/
 │   ├── backup.sh                    # Main backup script for USB drive
@@ -42,8 +42,8 @@ Clone the repository:
 
 bash
 Copy code
-git clone https://github.com/yourusername/networked-backup-system.git
-cd networked-backup-system
+git clone https://github.com/casecraftedshop/USBackup.git
+cd USBackup
 Configure the project:
 
 Edit config/backup_config.json to specify backup paths and frequency.
@@ -53,7 +53,7 @@ Make scripts executable:
 bash
 Copy code
 chmod +x scripts/*.sh
-Run the connection script: Execute scripts/connect_usb.sh to connect to your USB drive.
+Run the connection script: Execute scripts/connect_device.sh to connect to your drive.
 
 Schedule backups: Use scripts/schedule_cron.sh to set up cron jobs for regular backups.
 
