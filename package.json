@@ -2,9 +2,9 @@
   "name": "usbackup",
   "version": "1.0.0",
   "description": "Automated Backup Solution for Networked Storage Devices, USB Drives, and Remote Servers with Encryption and Google OAuth Notifications",
-  "main": "index.js",
+  "main": "scripts/initialize_backup.sh",
   "scripts": {
-    "start": "bash scripts/initialize_backup.sh",
+    "start": "bash scripts/connect_devices.sh",
     "test": "echo \"Error: no test specified\" && exit 1",
     "backup": "bash scripts/backup.sh",
     "schedule": "bash scripts/schedule_cron.sh"
