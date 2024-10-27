@@ -1,0 +1,40 @@
+{
+  "name": "usbackup",
+  "version": "1.0.0",
+  "description": "Automated Backup Solution for Networked Storage Devices, USB Drives, and Remote Servers with Encryption and Google OAuth Notifications",
+  "main": "index.js",
+  "scripts": {
+    "start": "bash scripts/connect_storage.sh",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "backup": "bash scripts/backup.sh",
+    "schedule": "bash scripts/schedule_cron.sh"
+  },
+  "author": "CaseCraftedShop",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "axios": "^0.27.2"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/casecraftedshop/USBackup.git"
+  },
+  "bugs": {
+    "url": "https://github.com/casecraftedshop/USBackup/issues"
+  },
+  "homepage": "https://github.com/casecraftedshop/USBackup#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "keywords": [
+    "backup",
+    "networked-storage",
+    "usb",
+    "remote-server",
+    "encryption",
+    "google-oauth",
+    "automated-backup",
+    "cron"
+  ]
+}
