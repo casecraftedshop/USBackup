@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USBackup - Backup System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+</head>
+<body>
+    <section class="hero is-primary">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">USBackup System</h1>
+                <h2 class="subtitle">Your personal automated backup solution</h2>
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <div class="buttons">
+                <a href="#" onclick="runBackup()" class="button is-link">Run Backup Now</a>
+                <a href="#" onclick="checkStatus()" class="button is-info">Check Backup Status</a>
+            </div>
+            <div id="status" class="notification is-light" style="display: none;">
+                Status: <span id="status-text"></span>
+            </div>
+        </div>
+    </section>
+    <script>
+        function runBackup() {
+            // Assuming a backend endpoint or a command to trigger
+            fetch('/run-backup').then(response => {
+                document.getElementById('status').style.display = 'block';
+                document.getElementById('status-text').innerText = 'Backup started!';
+            }).catch(err => {
+                document.getElementById('status').style.display = 'block';
+                document.getElementById('status-text').innerText = 'Failed to start backup.';
+            });
+        }
+
+        function checkStatus() {
+            // Placeholder for checking backup status
+            document.getElementById('status').style.display = 'block';
+            document.getElementById('status-text').innerText = 'All systems are operational!';
+        }
+    </script>
+</body>
+</html>
