@@ -4,7 +4,7 @@
   "description": "Automated Backup Solution for Networked Storage Devices, USB Drives, and Remote Servers with Encryption and Google OAuth Notifications",
   "main": "index.js",
   "scripts": {
-    "start": "bash scripts/connect_storage.sh",
+    "start": "bash scripts/initialize_backup.sh",
     "test": "echo \"Error: no test specified\" && exit 1",
     "backup": "bash scripts/backup.sh",
     "schedule": "bash scripts/schedule_cron.sh"
