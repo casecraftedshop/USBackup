@@ -25,7 +25,7 @@ STORAGE_DEVICES_FILE="config/storage_devices.json"
 RETRY_COUNT=3
 
 # Example of retrieving sensitive information securely using `pass`
-NETWORK_PASSWORD=$(cat ~/.ssh/id_rsa)
+NETWORK_PASSWORD=$(pass backup/NETWORK_PASSWORD)
 SSH_KEY_PATH=$(pass backup/SSH_KEY_PATH)
 
 # Check for dependencies
