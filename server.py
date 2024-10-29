@@ -1,35 +1,34 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, abort
 import subprocess
 import os
-import json
 import logging
 from flask_cors import CORS
 from dotenv import load_dotenv
-from functools import wraps
-import secrets
+from logging.handlers import RotatingFileHandler
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for the API
+CORS(app, resources={r"/api/*": {"origins": "https://yourfrontenddomain.com"}})  # Enable CORS for a specific domain
 
 # Load environment variables from .env file
 load_dotenv()
 
-# Security: Authentication token (should be stored in an environment variable)
-API_TOKEN = os.getenv('API_TOKEN', 'default_token')
+# Configure logging with rotation to avoid overly large log files
+handler = RotatingFileHandler('logs/server_log.txt', maxBytes=5000000, backupCount=5)
+logging.basicConfig(handlers=[handler], level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Configure logging
-logging.basicConfig(filename='logs/server_log.txt', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Set up rate limiter
+limiter = Limiter(get_remote_address, app=app, default_limits=["200 per day", "50 per hour"])
 
-# Authentication decorator
-def require_auth(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = request.headers.get('Authorization')
-        if not token or token != f"Bearer {API_TOKEN}":
-            logging.warning('Unauthorized access attempt.')
-            return jsonify({'message': 'Unauthorized'}), 401
-        return f(*args, **kwargs)
-    return decorated
+# Authorization Token from Environment
+AUTH_TOKEN = os.getenv('AUTH_TOKEN')
+
+# Function to verify token
+def verify_token(token):
+    if token and token.startswith("Bearer "):
+        return token.split(" ")[1] == AUTH_TOKEN
+    return False
 
 # Base route to serve index.html for root URL requests
 @app.route('/')
@@ -42,11 +41,15 @@ def home():
 
 # Route to run the backup process
 @app.route('/api/run-backup', methods=['POST'])
-@require_auth
+@limiter.limit("10 per minute")
 def run_backup():
+    token = request.headers.get('Authorization')
+    if not verify_token(token):
+        abort(401, 'Unauthorized')
+
     try:
         # Execute the shell script to initiate backup
-        subprocess.Popen(['./scripts/backup.sh'])
+        subprocess.Popen(['sudo', './scripts/backup.sh'])
         logging.info('Backup process started successfully.')
         return jsonify({'message': 'Backup started successfully.'}), 200
     except Exception as e:
@@ -55,8 +58,12 @@ def run_backup():
 
 # Route to get the backup status
 @app.route('/api/backup-status', methods=['GET'])
-@require_auth
+@limiter.limit("10 per minute")
 def backup_status():
+    token = request.headers.get('Authorization')
+    if not verify_token(token):
+        abort(401, 'Unauthorized')
+
     try:
         # Mock status check - In production, this should retrieve real-time status
         status_message = "All systems are operational!"
@@ -68,8 +75,12 @@ def backup_status():
 
 # Route to mount a USB or external drive
 @app.route('/api/mount-device', methods=['POST'])
-@require_auth
+@limiter.limit("5 per minute")
 def mount_device():
+    token = request.headers.get('Authorization')
+    if not verify_token(token):
+        abort(401, 'Unauthorized')
+
     try:
         data = request.get_json()
         device_path = data.get('device_path')
@@ -94,8 +105,12 @@ def mount_device():
 
 # Route to unmount a USB or external drive
 @app.route('/api/unmount-device', methods=['POST'])
-@require_auth
+@limiter.limit("5 per minute")
 def unmount_device():
+    token = request.headers.get('Authorization')
+    if not verify_token(token):
+        abort(401, 'Unauthorized')
+
     try:
         data = request.get_json()
         mount_point = data.get('mount_point')
@@ -124,4 +139,6 @@ def health_check():
 
 if __name__ == '__main__':
     # For production, use a WSGI server like Gunicorn
+    # Example command to run with Gunicorn:
+    # gunicorn -w 4 -b 0.0.0.0:5000 server:app
     app.run(host='0.0.0.0', port=5000)
