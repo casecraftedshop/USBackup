@@ -1,2 +1,3 @@
-baseurl: ''
-url: 'https://casecraftedshop.github.io/USBackup'
+# Configuration settings for GitHub Pages
+baseurl: '' # the subpath of your site, for example /blog
+url: 'https://casecraftedshop.github.io/USBackup' # your GitHub pages URL
