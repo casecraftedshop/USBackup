@@ -47,6 +47,8 @@ jobs:
         echo "BACKUP_DIRECTORY=/home/ubuntu/backups/" >> .env
         echo "BACKUP_INTERVAL=\"0 */8 * * *\"" >> .env
         echo "USB_DEVICE_PATH=/dev/sdb1" >> .env
+        echo "USB_DEVICE_CAPTION=Kingston DataTraveler 3.0 USB Device" >> .env
+        echo "USB_DEVICE_SIZE=15471751680" >> .env
         echo "HDD_DEVICE_PATH=/dev/sdb2" >> .env
         echo "NETWORK_DEVICE_PATH=//192.168.1.100/shared" >> .env
         echo "NETWORK_USERNAME=network_username" >> .env
