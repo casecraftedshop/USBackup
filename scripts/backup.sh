@@ -11,11 +11,17 @@ fi
 # Load configuration files
 CONFIG_FILE="config/backup_config.json"
 USB_INFO_FILE="config/usb_info.json"
-LOG_FILE="logs/backup_log.txt"
-BACKUP_ENCRYPTION_PASSPHRASE="${BACKUP_ENCRYPTION_PASSPHRASE:-default_passphrase}"
+LOG_DIR="logs"
+LOG_FILE="${LOG_DIR}/backup_log.txt"
 
 # Ensure jq is installed
 command -v jq >/dev/null 2>&1 || { echo "jq is not installed. Aborting." | tee -a "$LOG_FILE"; exit 1; }
+
+# Create log directory if it doesn't exist
+if [ ! -d "$LOG_DIR" ]; then
+    echo "Log directory does not exist. Creating $LOG_DIR." | tee -a "$LOG_FILE"
+    mkdir -p "$LOG_DIR" || { echo "Failed to create log directory $LOG_DIR. Aborting." | tee -a "$LOG_FILE"; exit 1; }
+fi
 
 # Load configurations
 BACKUP_DIR=$(jq -r '.backup_directory' "$CONFIG_FILE")
@@ -59,19 +65,16 @@ BACKUP_FILE="$BACKUP_DIR/backup_$(date +%Y%m%d_%H%M%S).tar.gz"
 echo "Creating backup in $BACKUP_FILE..." | tee -a "$LOG_FILE"
 
 # Use tar with includes and excludes
-tar -czf "$BACKUP_FILE" $(for path in $INCLUDE_PATHS; do echo "$path"; done) $(for path in $EXCLUDE_PATHS; do echo "--exclude=$path"; done) \
+INCLUDE_ARGS=$(for path in $INCLUDE_PATHS; do echo "$path"; done)
+EXCLUDE_ARGS=$(for path in $EXCLUDE_PATHS; do echo "--exclude=$path"; done)
+
+tar -czf "$BACKUP_FILE" $INCLUDE_ARGS $EXCLUDE_ARGS \
     || { echo "Backup creation failed." | tee -a "$LOG_FILE"; exit 1; }
 
 # Encrypt backup (using GPG)
 ENCRYPTED_BACKUP_FILE="${BACKUP_FILE}.gpg"
-if gpg --batch --yes --passphrase "$BACKUP_ENCRYPTION_PASSPHRASE" -c "$BACKUP_FILE"; then
-    echo "Backup encrypted successfully." | tee -a "$LOG_FILE"
-    rm "$BACKUP_FILE"
-    BACKUP_FILE="$ENCRYPTED_BACKUP_FILE"
-else
-    echo "Backup encryption failed." | tee -a "$LOG_FILE"
-    exit 1
-fi
+gpg --batch --yes --passphrase "$BACKUP_ENCRYPTION_PASSPHRASE" -c "$BACKUP_FILE" && rm "$BACKUP_FILE"
+BACKUP_FILE="$ENCRYPTED_BACKUP_FILE"
 
 # Verify backup file creation
 if [ ! -f "$BACKUP_FILE" ]; then
@@ -90,15 +93,10 @@ for attempt in $(seq 1 $RETRY_COUNT); do
     fi
 done
 
-# Verify copy using checksum
-LOCAL_CHECKSUM=$(sha256sum "$BACKUP_FILE" | awk '{print $1}')
-USB_CHECKSUM=$(sha256sum "$MOUNT_POINT/$(basename $BACKUP_FILE)" | awk '{print $1}')
-
-if [ "$LOCAL_CHECKSUM" != "$USB_CHECKSUM" ]; then
-    echo "Verification of copied backup failed. Checksums do not match. Aborting." | tee -a "$LOG_FILE"
+# Verify copy
+if ! diff "$BACKUP_FILE" "$MOUNT_POINT/$(basename $BACKUP_FILE)" > /dev/null; then
+    echo "Verification of copied backup failed. Aborting." | tee -a "$LOG_FILE"
     exit 1
-else
-    echo "Backup file copied to USB and verified successfully." | tee -a "$LOG_FILE"
 fi
 
 # Unmount the USB drive safely
@@ -110,4 +108,5 @@ echo "Backup completed successfully on $(date)" | tee -a "$LOG_FILE"
 
 # Notify user of completion
 echo "Backup process completed successfully!" | tee -a "$LOG_FILE"
+
 
