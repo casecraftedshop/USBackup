@@ -16,16 +16,19 @@ with open('config/backup_config.json') as config_file:
 
 local_backup_dir = config['local_backup_directory']
 remote_backup_dir = config['remote_backup_directory']
-ssh_host = os.getenv('SSH_HOST', config['ssh_host'])
-ssh_user = os.getenv('SSH_USER', config['ssh_user'])
-ssh_key_path = os.getenv('SSH_KEY_PATH', config['ssh_key_path'])
+ssh_host = os.getenv('SSH_HOST', config.get('ssh_host'))
+ssh_user = os.getenv('SSH_USER', config.get('ssh_user'))
+ssh_key_path = os.getenv('SSH_KEY_PATH', config.get('ssh_key_path'))
 data_to_backup = config['data_to_backup']
 
 # Create a timestamp for the backup file
 timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
 
 # Configure logging
-logging.basicConfig(filename='logs/backup_log.txt', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+log_dir = 'logs'
+if not os.path.exists(log_dir):
+    os.makedirs(log_dir)
+logging.basicConfig(filename=f'{log_dir}/backup_log.txt', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # GPG Configuration
 gpg = gnupg.GPG(gnupghome='/path/to/gnupg')
@@ -50,16 +53,20 @@ def create_backup(source_path):
         # Encrypt backup file
         with open(backup_path, 'rb') as f:
             encrypted_backup_path = f"{backup_path}.gpg"
-            gpg.encrypt_file(
+            result = gpg.encrypt_file(
                 f,
                 recipients=None,
                 symmetric=True,
-                passphrase=os.getenv('BACKUP_ENCRYPTION_PASSPHRASE'),
+                passphrase=os.getenv('BACKUP_ENCRYPTION_PASSPHRASE', 'default_passphrase'),
                 output=encrypted_backup_path
             )
-        os.remove(backup_path)  # Remove unencrypted backup file
-        logging.info(f'Backup {backup_filename} encrypted successfully.')
-        return encrypted_backup_path
+            if result.ok:
+                logging.info(f'Backup {backup_filename} encrypted successfully.')
+                os.remove(backup_path)  # Remove unencrypted backup file for security purposes
+                return encrypted_backup_path
+            else:
+                logging.error(f'Failed to encrypt backup {backup_filename}: {result.stderr}')
+                raise Exception(f'Encryption failed: {result.stderr}')
     except Exception as e:
         logging.error(f'Error creating or encrypting backup for {source_path}: {e}')
         raise
