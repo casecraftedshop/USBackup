@@ -11,17 +11,10 @@ fi
 # Load configuration files
 CONFIG_FILE="config/backup_config.json"
 USB_INFO_FILE="config/usb_info.json"
-LOG_DIR="logs"
-LOG_FILE="${LOG_DIR}/backup_log.txt"
+LOG_FILE="logs/backup_log.txt"
 
 # Ensure jq is installed
 command -v jq >/dev/null 2>&1 || { echo "jq is not installed. Aborting." | tee -a "$LOG_FILE"; exit 1; }
-
-# Create log directory if it doesn't exist
-if [ ! -d "$LOG_DIR" ]; then
-    echo "Log directory does not exist. Creating $LOG_DIR." | tee -a "$LOG_FILE"
-    mkdir -p "$LOG_DIR" || { echo "Failed to create log directory $LOG_DIR. Aborting." | tee -a "$LOG_FILE"; exit 1; }
-fi
 
 # Load configurations
 BACKUP_DIR=$(jq -r '.backup_directory' "$CONFIG_FILE")
@@ -65,10 +58,7 @@ BACKUP_FILE="$BACKUP_DIR/backup_$(date +%Y%m%d_%H%M%S).tar.gz"
 echo "Creating backup in $BACKUP_FILE..." | tee -a "$LOG_FILE"
 
 # Use tar with includes and excludes
-INCLUDE_ARGS=$(for path in $INCLUDE_PATHS; do echo "$path"; done)
-EXCLUDE_ARGS=$(for path in $EXCLUDE_PATHS; do echo "--exclude=$path"; done)
-
-tar -czf "$BACKUP_FILE" $INCLUDE_ARGS $EXCLUDE_ARGS \
+tar -czf "$BACKUP_FILE" $(for path in $INCLUDE_PATHS; do echo "$path"; done) $(for path in $EXCLUDE_PATHS; do echo "--exclude=$path"; done) \
     || { echo "Backup creation failed." | tee -a "$LOG_FILE"; exit 1; }
 
 # Encrypt backup (using GPG)
@@ -108,5 +98,3 @@ echo "Backup completed successfully on $(date)" | tee -a "$LOG_FILE"
 
 # Notify user of completion
 echo "Backup process completed successfully!" | tee -a "$LOG_FILE"
-
-
