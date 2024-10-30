@@ -5,7 +5,7 @@
       "device_path": "${USB_DEVICE_PATH}",
       "mount_point": "/mnt/usb",
       "filesystem_type": "ext4",
-      "capacity": "64G",
+      "capacity": "15.47GB",
       "vendor": "Kingston",
       "product": "DataTraveler 3.0",
       "serial_number": "${USB_SERIAL_NUMBER}",
