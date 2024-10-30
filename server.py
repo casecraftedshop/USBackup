@@ -9,7 +9,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "https://yourfrontenddomain.com"}})  # Enable CORS for a specific domain
+CORS(app, resources={r"/api/*": {"origins": "https://casecraftedshop.github.io/USBackup"}})  # Enable CORS for the front-end URL
 
 # Load environment variables from .env file
 load_dotenv()
