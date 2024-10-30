@@ -15,7 +15,10 @@ CORS(app, resources={r"/api/*": {"origins": "https://yourfrontenddomain.com"}}) 
 load_dotenv()
 
 # Configure logging with rotation to avoid overly large log files
-handler = RotatingFileHandler('logs/server_log.txt', maxBytes=5000000, backupCount=5)
+log_file_path = 'logs/server_log.txt'
+if not os.path.exists('logs'):
+    os.makedirs('logs')
+handler = RotatingFileHandler(log_file_path, maxBytes=5000000, backupCount=5)
 logging.basicConfig(handlers=[handler], level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Set up rate limiter
