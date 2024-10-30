@@ -37,7 +37,7 @@
   ],
   "remote_host": "${REMOTE_HOST}",
   "remote_user": "${REMOTE_USER}",
-  "remote_path": "${REMOTE_PATH}",
+  "remote_path": "/remote/backup/path",
   "ssh_key_path": "${SSH_KEY_PATH}",
   "data_to_backup": [
     "/path/to/data/to/backup"
