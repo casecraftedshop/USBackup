@@ -1,110 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>USBackup - Backup System</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+    <title>USBackup - Automated Backup Solution</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-    <section class="hero is-primary">
-        <div class="hero-body">
-            <div class="container">
-                <h1 class="title">USBackup System</h1>
-                <h2 class="subtitle">Your personal automated backup solution</h2>
-            </div>
-        </div>
-    </section>
-    <section class="section">
-        <div class="container">
-            <div class="buttons">
-                <a href="#" onclick="runBackup()" class="button is-link">Run Backup Now</a>
-                <a href="#" onclick="checkStatus()" class="button is-info">Check Backup Status</a>
-                <a href="#" onclick="mountDevice('/dev/sda1', '/mnt/usb')" class="button is-success">Mount USB</a>
-                <a href="#" onclick="unmountDevice('/mnt/usb')" class="button is-danger">Unmount USB</a>
-            </div>
-            <div id="status" class="notification is-light" style="display: none;">
-                Status: <span id="status-text"></span>
-            </div>
-        </div>
-    </section>
+    <div class="container">
+        <header role="banner">
+            <h1>Welcome to USBackup</h1>
+            <p>Your Automated Backup Solution for USB Drives, Network Storage, and Remote Servers</p>
+        </header>
+
+        <main role="main">
+            <section class="actions" aria-labelledby="actions-heading">
+                <h2 id="actions-heading">Actions</h2>
+                <div class="buttons">
+                    <button id="run-backup" class="action-button">Run Backup</button>
+                    <button id="check-status" class="action-button">Check Backup Status</button>
+                    <button id="mount-device" class="action-button">Mount Device</button>
+                    <button id="unmount-device" class="action-button">Unmount Device</button>
+                </div>
+            </section>
+
+            <section id="status" class="status-section" aria-labelledby="status-heading">
+                <h2 id="status-heading">Status</h2>
+                <pre id="status-output" aria-live="polite">Click "Check Backup Status" to see the system status.</pre>
+            </section>
+        </main>
+
+        <footer role="contentinfo">
+            <p>&copy; 2024 CaseCraftedShop - All Rights Reserved</p>
+        </footer>
+    </div>
+
     <script>
-        async function runBackup() {
-            try {
-                let response = await fetch('/api/run-backup', { method: 'POST' });
-                if (response.ok) {
-                    document.getElementById('status').style.display = 'block';
-                    document.getElementById('status-text').innerText = 'Backup started successfully!';
-                } else {
-                    document.getElementById('status').style.display = 'block';
-                    document.getElementById('status-text').innerText = 'Failed to start backup.';
-                }
-            } catch (err) {
-                document.getElementById('status').style.display = 'block';
-                document.getElementById('status-text').innerText = 'Error: Unable to start backup.';
+        document.addEventListener('DOMContentLoaded', () => {
+            // Fetch token from local storage
+            const authToken = localStorage.getItem('authToken');
+            if (!authToken) {
+                alert('Authentication token not found. Please login.');
+                return;
             }
-        }
 
-        async function checkStatus() {
-            try {
-                let response = await fetch('/api/backup-status');
-                if (response.ok) {
-                    let data = await response.json();
-                    document.getElementById('status').style.display = 'block';
-                    document.getElementById('status-text').innerText = ;
-                } else {
-                    document.getElementById('status').style.display = 'block';
-                    document.getElementById('status-text').innerText = 'Failed to retrieve status.';
-                }
-            } catch (err) {
-                document.getElementById('status').style.display = 'block';
-                document.getElementById('status-text').innerText = 'Error: Unable to retrieve status.';
-            }
-        }
+            // Set up authorization token
+            const AUTH_TOKEN = "Bearer " + authToken;
 
-        async function mountDevice(devicePath, mountPoint) {
-            try {
-                let response = await fetch('/api/mount-device', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ device_path: devicePath, mount_point: mountPoint }),
-                });
-                if (response.ok) {
-                    document.getElementById('status').style.display = 'block';
-                    document.getElementById('status-text').innerText = ;
-                } else {
-                    document.getElementById('status').style.display = 'block';
-                    document.getElementById('status-text').innerText = 'Failed to mount device.';
-                }
-            } catch (err) {
-                document.getElementById('status').style.display = 'block';
-                document.getElementById('status-text').innerText = 'Error: Unable to mount device.';
-            }
-        }
+            // Function for making API requests
+            async function apiRequest(url, method, body = null) {
+                try {
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': AUTH_TOKEN
+                        },
+                        body: body ? JSON.stringify(body) : null
+                    });
 
-        async function unmountDevice(mountPoint) {
-            try {
-                let response = await fetch('/api/unmount-device', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ mount_point: mountPoint }),
-                });
-                if (response.ok) {
-                    document.getElementById('status').style.display = 'block';
-                    document.getElementById('status-text').innerText = ;
-                } else {
-                    document.getElementById('status').style.display = 'block';
-                    document.getElementById('status-text').innerText = 'Failed to unmount device.';
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Failed to complete the request.');
+                    }
+
+                    const data = await response.json();
+                    return { status: response.status, data: data };
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert(`Error: ${error.message}`);
+                    return { status: 500, data: { message: 'Failed to reach the server.' } };
                 }
-            } catch (err) {
-                document.getElementById('status').style.display = 'block';
-                document.getElementById('status-text').innerText = 'Error: Unable to unmount device.';
             }
-        }
+
+            // Utility function for disabling buttons
+            function disableButton(button, disable) {
+                button.disabled = disable;
+                if (disable) {
+                    button.classList.add('disabled');
+                } else {
+                    button.classList.remove('disabled');
+                }
+            }
+
+            // Event listeners for button actions
+            document.getElementById("run-backup").addEventListener("click", async () => {
+                const button = document.getElementById("run-backup");
+                disableButton(button, true);
+                const result = await apiRequest('/api/run-backup', 'POST');
+                if (result.status === 200) {
+                    alert(result.data.message);
+                }
+                disableButton(button, false);
+            });
+
+            document.getElementById("check-status").addEventListener("click", async () => {
+                const button = document.getElementById("check-status");
+                disableButton(button, true);
+                const result = await apiRequest('/api/backup-status', 'GET');
+                if (result.status === 200) {
+                    document.getElementById("status-output").textContent = result.data.status;
+                } else {
+                    alert(result.data.message);
+                }
+                disableButton(button, false);
+            });
+
+            document.getElementById("mount-device").addEventListener("click", async () => {
+                const devicePath = prompt("Enter device path (e.g., /dev/sdb1):");
+                const mountPoint = prompt("Enter mount point (e.g., /mnt/usb):");
+                if (devicePath && mountPoint) {
+                    const button = document.getElementById("mount-device");
+                    disableButton(button, true);
+                    const result = await apiRequest('/api/mount-device', 'POST', { device_path: devicePath, mount_point: mountPoint });
+                    if (result.status === 200) {
+                        alert(result.data.message);
+                    }
+                    disableButton(button, false);
+                } else {
+                    alert('Device path and mount point are required.');
+                }
+            });
+
+            document.getElementById("unmount-device").addEventListener("click", async () => {
+                const mountPoint = prompt("Enter mount point to unmount (e.g., /mnt/usb):");
+                if (mountPoint) {
+                    const button = document.getElementById("unmount-device");
+                    disableButton(button, true);
+                    const result = await apiRequest('/api/unmount-device', 'POST', { mount_point: mountPoint });
+                    if (result.status === 200) {
+                        alert(result.data.message);
+                    }
+                    disableButton(button, false);
+                } else {
+                    alert('Mount point is required.');
+                }
+            });
+        });
     </script>
 </body>
+
 </html>
