@@ -2,20 +2,24 @@
   "name": "usbackup",
   "version": "1.0.0",
   "description": "Automated Backup Solution for Networked Storage Devices, USB Drives, and Remote Servers with Encryption and Google OAuth Notifications",
-  "main": "scripts/initialize_backup.sh",
+  "main": "web/index.js",
   "scripts": {
-    "start": "bash scripts/connect_devices.sh",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node web/server.js",
     "backup": "bash scripts/backup.sh",
-    "schedule": "bash scripts/schedule_cron.sh"
+    "initialize": "bash scripts/initialize_backup.sh",
+    "schedule": "bash scripts/schedule_cron.sh",
+    "connect": "bash scripts/connect_devices.sh",
+    "test": "echo \"No tests specified\" && exit 1"
   },
   "author": "CaseCraftedShop",
   "license": "MIT",
   "dependencies": {
+    "express": "^4.18.0",
+    "mongodb": "^4.3.1",
     "dotenv": "^10.0.0",
-    "axios": "^0.27.2"
+    "axios": "^0.27.2",
+    "node-fetch": "^2.6.7"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/casecraftedshop/USBackup.git"
@@ -35,6 +39,12 @@
     "encryption",
     "google-oauth",
     "automated-backup",
-    "cron"
-  ]
+    "cron",
+    "mongodb",
+    "cloud-integration"
+  ],
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
 }
+
