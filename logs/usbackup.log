@@ -1,0 +1,31 @@
+**usbackup.log**
+```plaintext
+--- USBackup Log ---
+Date: [YYYY-MM-DD HH:MM:SS]
+Backup started for [Source]:
+Target location: [Destination]
+Status: Success
+
+Date: [YYYY-MM-DD HH:MM:SS]
+Backup started for [Source]:
+Target location: [Destination]
+Status: Failed - Reason: [Error Message]
+
+Date: [YYYY-MM-DD HH:MM:SS]
+Scheduled backup complete.
+Next scheduled backup: [Next Time]
+-------------------------
+```
+
+**server_log.txt**
+```plaintext
+--- Server Log ---
+[YYYY-MM-DD HH:MM:SS] INFO: Backup process started successfully.
+[YYYY-MM-DD HH:MM:SS] ERROR: Failed to mount device: [Error message]
+[YYYY-MM-DD HH:MM:SS] INFO: Backup status retrieved successfully.
+[YYYY-MM-DD HH:MM:SS] INFO: Device /dev/sdb1 mounted successfully at /mnt/usb.
+[YYYY-MM-DD HH:MM:SS] ERROR: Failed to start backup, please contact system administrator.
+-------------------------
+```
+
+These logs provide critical information for troubleshooting and tracking the status of backup operations and server activity, ensuring system reliability and transparency.
