@@ -43,23 +43,32 @@ jobs:
 
     - name: Set environment variables
       run: |
-        echo "AUTH_TOKEN=SHA256:your_generated_token_here" >> .env
+        echo "AUTH_TOKEN=${{ secrets.AUTH_TOKEN }}" >> .env
         echo "BACKUP_DIRECTORY=/home/ubuntu/backups/" >> .env
         echo "BACKUP_INTERVAL=\"0 */8 * * *\"" >> .env
         echo "USB_DEVICE_PATH=/dev/sdb1" >> .env
-        echo "USB_DEVICE_CAPTION=Kingston DataTraveler 3.0 USB Device" >> .env
-        echo "USB_DEVICE_SIZE=15471751680" >> .env
+        echo "USB_SERIAL_NUMBER=$(pass backup/USB_SERIAL_NUMBER)" >> .env
         echo "HDD_DEVICE_PATH=/dev/sdb2" >> .env
+        echo "HDD_SERIAL_NUMBER=$(pass backup/HDD_SERIAL_NUMBER)" >> .env
         echo "NETWORK_DEVICE_PATH=//192.168.1.100/shared" >> .env
-        echo "NETWORK_USERNAME=network_username" >> .env
-        echo "NETWORK_PASSWORD=network_password" >> .env
+        echo "NETWORK_USERNAME=$(pass backup/NETWORK_USERNAME)" >> .env
+        echo "NETWORK_PASSWORD=${{ secrets.NETWORK_PASSWORD }}" >> .env
+        echo "NETWORK_SERIAL_NUMBER=NAS123456" >> .env
         echo "REMOTE_HOST=15.223.3.155" >> .env
-        echo "REMOTE_USER=remote_user" >> .env
+        echo "REMOTE_USER=$(pass backup/REMOTE_USER)" >> .env
+        echo "REMOTE_PATH=/remote/backup/path" >> .env
         echo "SSH_KEY_PATH=~/.ssh/id_rsa" >> .env
+        echo "BACKUP_ENCRYPTION_PASSPHRASE=$(pass backup/BACKUP_ENCRYPTION_PASSPHRASE)" >> .env
         echo "NOTIFICATION_EMAIL=your-email@example.com" >> .env
         echo "GNUPG_HOME=/home/ubuntu/.gnupg" >> .env
         echo "LOGGING_LEVEL=ERROR" >> .env
-        echo "SFTP_PRIVATE_KEY=your_sftp_private_key_here" >> .env
+        echo "SFTP_PRIVATE_KEY=$(pass backup/SFTP_PRIVATE_KEY)" >> .env
+        echo "SMTP_SERVER=smtp.example.com" >> .env
+        echo "SMTP_PORT=587" >> .env
+        echo "SMTP_USER=$(pass backup/SMTP_USER)" >> .env
+        echo "SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}" >> .env
+        echo "SMTP_USE_TLS=true" >> .env
+        echo "SMTP_USE_SSL=false" >> .env
 
     - name: Prepare logs directory
       run: mkdir -p logs
