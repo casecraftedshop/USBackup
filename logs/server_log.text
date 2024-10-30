@@ -1,0 +1,8 @@
+--- Server Log ---
+[2024-10-30 12:15:34] INFO: Backup process started successfully.
+[2024-10-30 12:16:01] ERROR: Failed to mount device: Device /dev/sdb1 not found.
+[2024-10-30 12:20:45] INFO: Backup status retrieved successfully.
+[2024-10-30 12:25:12] INFO: Device /dev/sdb1 mounted successfully at /mnt/usb.
+[2024-10-30 12:30:50] ERROR: Failed to start backup, please contact system administrator.
+[2024-10-30 12:45:23] INFO: Device at /mnt/usb unmounted successfully.
+-------------------------
