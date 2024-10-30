@@ -34,7 +34,7 @@ def verify_token(token):
 @app.route('/')
 def home():
     try:
-        return render_template('index.html')
+        return render_template('web/index.html')
     except Exception as e:
         logging.error(f"Error loading the home page: {str(e)}")
         return f"Error loading the home page: {str(e)}", 500
