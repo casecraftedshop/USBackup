@@ -38,7 +38,6 @@ for attempt in $(seq 1 $RETRY_COUNT); do
     # Check if the crontab is already set for this backup script
     CRON_JOB_EXISTS=$(crontab -l 2>/dev/null | grep -F "$BACKUP_SCRIPT_PATH")
 
-    # Schedule the backup script if it doesn't already exist
     if [ -z "$CRON_JOB_EXISTS" ]; then
         echo "Attempt $attempt/$RETRY_COUNT: Scheduling backup script to run at interval $BACKUP_INTERVAL." | tee -a "$LOG_FILE"
         (crontab -l 2>/dev/null; echo "$BACKUP_INTERVAL $BACKUP_SCRIPT_PATH >> $LOG_FILE 2>&1") | crontab - || {
@@ -46,9 +45,6 @@ for attempt in $(seq 1 $RETRY_COUNT); do
             sleep 5
             continue
         }
-    else
-        echo "Cron job for backup already exists." | tee -a "$LOG_FILE"
-        break
     fi
 
     # Verify if cron job is active
