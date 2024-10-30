@@ -1,12 +1,18 @@
 #!/bin/bash
 
 # Load environment variables
-source .env
+if [ -f ".env" ]; then
+    source .env
+else
+    echo ".env file not found. Aborting." | tee -a "logs/backup_log.txt"
+    exit 1
+fi
 
 # Load configuration files
 CONFIG_FILE="config/backup_config.json"
 USB_INFO_FILE="config/usb_info.json"
 LOG_FILE="logs/backup_log.txt"
+BACKUP_ENCRYPTION_PASSPHRASE="${BACKUP_ENCRYPTION_PASSPHRASE:-default_passphrase}"
 
 # Ensure jq is installed
 command -v jq >/dev/null 2>&1 || { echo "jq is not installed. Aborting." | tee -a "$LOG_FILE"; exit 1; }
@@ -58,8 +64,14 @@ tar -czf "$BACKUP_FILE" $(for path in $INCLUDE_PATHS; do echo "$path"; done) $(f
 
 # Encrypt backup (using GPG)
 ENCRYPTED_BACKUP_FILE="${BACKUP_FILE}.gpg"
-gpg --batch --yes --passphrase "$BACKUP_ENCRYPTION_PASSPHRASE" -c "$BACKUP_FILE" && rm "$BACKUP_FILE"
-BACKUP_FILE="$ENCRYPTED_BACKUP_FILE"
+if gpg --batch --yes --passphrase "$BACKUP_ENCRYPTION_PASSPHRASE" -c "$BACKUP_FILE"; then
+    echo "Backup encrypted successfully." | tee -a "$LOG_FILE"
+    rm "$BACKUP_FILE"
+    BACKUP_FILE="$ENCRYPTED_BACKUP_FILE"
+else
+    echo "Backup encryption failed." | tee -a "$LOG_FILE"
+    exit 1
+fi
 
 # Verify backup file creation
 if [ ! -f "$BACKUP_FILE" ]; then
@@ -78,10 +90,15 @@ for attempt in $(seq 1 $RETRY_COUNT); do
     fi
 done
 
-# Verify copy
-if ! diff "$BACKUP_FILE" "$MOUNT_POINT/$(basename $BACKUP_FILE)" > /dev/null; then
-    echo "Verification of copied backup failed. Aborting." | tee -a "$LOG_FILE"
+# Verify copy using checksum
+LOCAL_CHECKSUM=$(sha256sum "$BACKUP_FILE" | awk '{print $1}')
+USB_CHECKSUM=$(sha256sum "$MOUNT_POINT/$(basename $BACKUP_FILE)" | awk '{print $1}')
+
+if [ "$LOCAL_CHECKSUM" != "$USB_CHECKSUM" ]; then
+    echo "Verification of copied backup failed. Checksums do not match. Aborting." | tee -a "$LOG_FILE"
     exit 1
+else
+    echo "Backup file copied to USB and verified successfully." | tee -a "$LOG_FILE"
 fi
 
 # Unmount the USB drive safely
@@ -93,3 +110,4 @@ echo "Backup completed successfully on $(date)" | tee -a "$LOG_FILE"
 
 # Notify user of completion
 echo "Backup process completed successfully!" | tee -a "$LOG_FILE"
+
