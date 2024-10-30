@@ -1,1 +1,25 @@
+[Unit]
+Description=USBackup Service - Automated Backup for Networked Storage Devices and External Drives
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/USBackup
+ExecStart=/usr/bin/python3 /home/ubuntu/USBackup/scripts/backup.py
+Restart=always
+EnvironmentFile=/home/ubuntu/USBackup/.env
+
+# Security: Limit permissions for this service to reduce the risk of unintended actions
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
+NoNewPrivileges=true
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=usbackup
+
+[Install]
+WantedBy=multi-user.target
 
