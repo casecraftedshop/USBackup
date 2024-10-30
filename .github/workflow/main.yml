@@ -42,31 +42,31 @@ jobs:
         pip install gunicorn
 
     - name: Set environment variables
-  run: |
-    echo "AUTH_TOKEN=${{ secrets.AUTH_TOKEN }}" >> .env
-    echo "BACKUP_DIRECTORY=${{ secrets.BACKUP_DIRECTORY }}" >> .env
-    echo "BACKUP_INTERVAL=${{ secrets.BACKUP_INTERVAL }}" >> .env
-    echo "GNUPG_HOME=${{ secrets.GNUPG_HOME }}" >> .env
-    echo "HDD_DEVICE=${{ secrets.HDD_DEVICE }}" >> .env
-    echo "HDD_SERIAL_NUMBER=${{ secrets.HDD_SERIAL_NUMBER }}" >> .env
-    echo "LOGGING_LEVEL=${{ secrets.LOGGING_LEVEL }}" >> .env
-    echo "NETWORK_DEVICE_PATH=${{ secrets.NETWORK_DEVICE_PATH }}" >> .env
-    echo "NETWORK_PASSWORD=${{ secrets.NETWORK_PASSWORD }}" >> .env
-    echo "NETWORK_USERNAME=${{ secrets.NETWORK_USERNAME }}" >> .env
-    echo "NOTIFICATION_EMAIL=${{ secrets.NOTIFICATION_EMAIL }}" >> .env
-    echo "REMOTE_HOST=${{ secrets.REMOTE_HOST }}" >> .env
-    echo "REMOTE_PATH=${{ secrets.REMOTE_PATH }}" >> .env
-    echo "REMOTE_USER=${{ secrets.REMOTE_USER }}" >> .env
-    echo "SFTP_PRIVATE_KEY=${{ secrets.SFTP_PRIVATE_KEY }}" >> .env
-    echo "SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}" >> .env
-    echo "SMTP_PORT=${{ secrets.SMTP_PORT }}" >> .env
-    echo "SMTP_SERVER=${{ secrets.SMTP_SERVER }}" >> .env
-    echo "SMTP_USER=${{ secrets.SMTP_USER }}" >> .env
-    echo "SMTP_USE_TLS=${{ secrets.SMTP_USE_TLS }}" >> .env
-    echo "SMTP_USE_SSL=${{ secrets.SMTP_USE_SSL }}" >> .env
-    echo "SSH_KEY_PATH=${{ secrets.SSH_KEY_PATH }}" >> .env
-    echo "USB_DEVICE_PATH=${{ secrets.USB_DEVICE_PATH }}" >> .env
-    echo "USB_SERIAL_NUMBER=${{ secrets.USB_SERIAL_NUMBER }}" >> .env
+      run: |
+        echo "AUTH_TOKEN=${{ secrets.AUTH_TOKEN }}" >> .env
+        echo "BACKUP_DIRECTORY=${{ secrets.BACKUP_DIRECTORY }}" >> .env
+        echo "BACKUP_INTERVAL=${{ secrets.BACKUP_INTERVAL }}" >> .env
+        echo "GNUPG_HOME=${{ secrets.GNUPG_HOME }}" >> .env
+        echo "HDD_DEVICE=${{ secrets.HDD_DEVICE }}" >> .env
+        echo "HDD_SERIAL_NUMBER=${{ secrets.HDD_SERIAL_NUMBER }}" >> .env
+        echo "LOGGING_LEVEL=${{ secrets.LOGGING_LEVEL }}" >> .env
+        echo "NETWORK_DEVICE_PATH=${{ secrets.NETWORK_DEVICE_PATH }}" >> .env
+        echo "NETWORK_PASSWORD=${{ secrets.NETWORK_PASSWORD }}" >> .env
+        echo "NETWORK_USERNAME=${{ secrets.NETWORK_USERNAME }}" >> .env
+        echo "NOTIFICATION_EMAIL=${{ secrets.NOTIFICATION_EMAIL }}" >> .env
+        echo "REMOTE_HOST=${{ secrets.REMOTE_HOST }}" >> .env
+        echo "REMOTE_PATH=${{ secrets.REMOTE_PATH }}" >> .env
+        echo "REMOTE_USER=${{ secrets.REMOTE_USER }}" >> .env
+        echo "SFTP_PRIVATE_KEY=${{ secrets.SFTP_PRIVATE_KEY }}" >> .env
+        echo "SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}" >> .env
+        echo "SMTP_PORT=${{ secrets.SMTP_PORT }}" >> .env
+        echo "SMTP_SERVER=${{ secrets.SMTP_SERVER }}" >> .env
+        echo "SMTP_USER=${{ secrets.SMTP_USER }}" >> .env
+        echo "SMTP_USE_TLS=${{ secrets.SMTP_USE_TLS }}" >> .env
+        echo "SMTP_USE_SSL=${{ secrets.SMTP_USE_SSL }}" >> .env
+        echo "SSH_KEY_PATH=${{ secrets.SSH_KEY_PATH }}" >> .env
+        echo "USB_DEVICE_PATH=${{ secrets.USB_DEVICE_PATH }}" >> .env
+        echo "USB_SERIAL_NUMBER=${{ secrets.USB_SERIAL_NUMBER }}" >> .env
     
     - name: Prepare logs directory
       run: mkdir -p logs
