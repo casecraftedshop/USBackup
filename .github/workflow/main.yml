@@ -1,6 +1,6 @@
 name: Deploy USBackup
 
-on:
+on
   push:
     branches:
       - main
